@@ -15,7 +15,7 @@ function [wavelengths, flux, noise_variance, pixel_mask, sigma_pixel] = read_spe
   inverse_noise_variance = measurements{3};
 
   % sigma of pixel in units of number of pixel 
-  sigma_pixel = 0.094147; %Estimate, test value
+  sigma_pixel = ones(size(flux))*0.94147; %Estimate, test value
 
   % derive noise variance
   noise_variance = 1 ./ (inverse_noise_variance);

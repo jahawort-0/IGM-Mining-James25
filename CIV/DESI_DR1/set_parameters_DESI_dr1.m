@@ -52,7 +52,7 @@ normalization_max_lambda = 1475;
 % null model parameters             XXX DESI has a 0.8A wavelength spacing
 min_lambda         = loading_min_lambda+1;                   % range of rest wavelengths to       Å
 max_lambda         = loading_max_lambda-1;                    %   model
-dlambda            = 0.5;                    % separation of wavelength grid      Å
+dlambda            = 0.8;                    % separation of wavelength grid      Å
 k                  = 20;                      % rank of non-diagonal contribution
 max_noise_variance = 0.5^2;                   % maximum pixel noise allowed during model training
 h                  = 2;                     % masking par to remove CIV region 
@@ -103,7 +103,7 @@ testing_set_name = 'DESI-dr1';
 max_civ = 7; 
 % base directory for all data 
 %Change to something new on Cosmic
-base_directory = 'IGM-Mining-James';
+base_directory = 'output';
 % utility functions for identifying various directories
 distfiles_directory = @(release) ...
    sprintf('%s/%s/distfiles', base_directory, release);
@@ -125,5 +125,5 @@ c4_catalog_directory = @(name) ...
 %---------DESI dr1-------------
 
 file_loader_DESI = @(tid)...
-    (read_spec_DESI(sprintf("/home/cosmic/DESI_data/%d.fits",tid)));
+    (read_spec_DESI(sprintf("/home/cosmic/DESI_data/%s.fits",tid)));
     

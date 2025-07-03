@@ -27,7 +27,7 @@ filter_flags = zeros(num_quasars, 1, 'uint8');
 %ind = (1310*(1+all_zqso_dr16)<3650) | (1548*(1+all_zqso_dr16)>10000); 
 %filter_flags(ind)  = bitset(filter_flags(ind), 2, true);
 
-num_quasars=100;
+num_quasars=1000;
 for i = 1:num_quasars
 
   if (filter_flags(i)~=0)
@@ -37,11 +37,11 @@ for i = 1:num_quasars
   %------dr16----------
   
     [this_wavelengths, this_flux, this_noise_variance, this_pixel_mask, this_sigma_pixel] ...
-    = file_loader_DESI(all_QSO_ID_dr1(i));
+    = file_loader_DESI(all_QSO_ID_dr1{i});
    % % Masking Sky lines 
 
   this_pixel_mask((abs(this_wavelengths-5579)<5) & (abs(this_wavelengths-6302)<5))=1;
-  this_rest_wavelengths = emitted_wavelengths(this_wavelengths, all_zqso_dr16(i));
+  this_rest_wavelengths = emitted_wavelengths(this_wavelengths, all_zqso_dr1(i));
   % normalize flux
 
   ind = (this_rest_wavelengths >= normalization_min_lambda) & ...
@@ -85,8 +85,8 @@ for i = 1:num_quasars
   all_sigma_pixel{i}    =     this_sigma_pixel(ind); 
 
 
-  fprintf('loaded quasar %i of %i (%i)\n', ...
-          i, num_quasars, all_QSO_ID_dr1(i));
+  fprintf('loaded quasar %i of %i (%s)\n', ...
+      i, num_quasars, all_QSO_ID_dr1{i});
 
 end
 
