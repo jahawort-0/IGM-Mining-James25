@@ -98,7 +98,7 @@ min_z_c4 = @(wavelengths, z_qso) ...         % determines minimum z_DLA to searc
 % min_z_c4 = @(wavelengths, z_qso) ...         % determines minimum z_DLA to search
 %      min(wavelengths) / civ_1548_wavelength - 1;
 train_ratio =1;
-training_set_name = 'C13-full';  #%% Change
+training_set_name = 'C13-full';  %% Change
 testing_set_name = 'DESI-dr1';  
 max_civ = 7; 
 % base directory for all data 

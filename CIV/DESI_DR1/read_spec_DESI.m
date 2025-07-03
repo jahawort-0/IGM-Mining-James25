@@ -15,7 +15,7 @@ function [wavelengths, flux, noise_variance, pixel_mask, sigma_pixel] = read_spe
   inverse_noise_variance = measurements{3};
 
   % sigma of pixel in units of number of pixel 
-  sigma_pixel = ;
+  sigma_pixel = 0.094147; %Estimate, test value
 
   % derive noise variance
   noise_variance = 1 ./ (inverse_noise_variance);
@@ -24,9 +24,9 @@ function [wavelengths, flux, noise_variance, pixel_mask, sigma_pixel] = read_spe
   % (FULLREJECT, NOSKY, NODATA); additionally remove pixels with
   % BRIGHTSKY set
   pixel_mask = ...
-      (inverse_noise_variance <= 0) | bitget(and_mask, BRIGHTSKY) |...
+      (inverse_noise_variance <= 0) |...
       (noise_variance <=0) | (sigma_pixel<=0) | isnan(sigma_pixel) | ...
       (isnan(noise_variance) | isnan(inverse_noise_variance) | isinf(sigma_pixel) | ...
-      isinf(noise_variance) | isinf(inverse_noise_variance));
+      isinf(noise_variance) | isinf(inverse_noise_variance)); %| bitget(and_mask, BRIGHTSKY)
 
 end
