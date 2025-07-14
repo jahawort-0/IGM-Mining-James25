@@ -1,8 +1,8 @@
 clear
 fprintf('Setting paramters ...\n')
 num_quasars = 100;
-cataloging = 0;
-preloading = 0;
+cataloging = 1;
+preloading = 1;
 sampling   = 0;
 plotting   = 1;
 processing = 1;
@@ -10,7 +10,7 @@ merging    = 0;
 EWer       =0;
 pltP       =0;
 CredInt    =0;
-dv_mask    = 250;
+dv_mask    = 250; 
 HPCC = 0;
 voigtPrep = 0;
 maskType = 1;
@@ -42,14 +42,14 @@ if voigtPrep == 1
 end
 
 
-%Prepare prior catalog, choose DR7 Cooksey or DR16 Jake+Gannon
+%Prepare prior catalog, choose dr7
 catDR7 = load(sprintf('%s/catalog', processed_directory(releasePrior)));
-filter_flagsDR7 = load(sprintf('%s/filter_flags', processed_directory(releasePrior)), ...
+filter_flagsDR7 = load(sprintf('%s/filter_flags', processed_directory(releasePrior)), ...       %%Error here, filter flags from prior release needed,
 'filter_flags');
 prior_ind = (filter_flagsDR7.filter_flags==0); 
 all_z_civ_C13 = catDR7.all_z_civ1;
-all_REW_1548_DR7 = catDR7.all_EW1;
-all_REW_1550_DR7 = catDR7.all_EW2;
+% all_REW_1548_DR7 = catDR12.all_EW1;
+% all_REW_1550_DR7 = catDR12.all_EW2;
 
 
 fprintf('Learning model ...\n')
@@ -77,7 +77,7 @@ fprintf(sprintf('%d Samples are generated\n', num_C4_samples));
 % load preprocessed QSOs
 fprintf('Preloading QSOs ...\n')
 if preloading == 1
-    preload_qsos_dr16
+    preload_qsos_DESI_dr1
 end
 load(sprintf('%s/preloaded_qsos_%s', processed_directory(releaseTest), testing_set_name));
 
@@ -87,7 +87,7 @@ test_ind = (filter_flags==0);
 if processing==1
     fprintf('processing QSO: %d to %d\n\n', ind_S, ind_S +  num_quasars-1);
     parpool('local', cores);
-    process_qsos_dr16_par
+    process_qsos_DESI_dr1
     
 end
 
