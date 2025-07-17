@@ -97,7 +97,7 @@ if (ind_S==180001)
 end
 
 this_quasar_ind = 0;
-for all_quasar_ind = 1:num_quasars
+for all_quasar_ind = 1:numel(all_wavelengths)
 % for all_quasar_ind = [32]%, 37, 46,56,57,77]
 %     this_quasar_ind = all_quasar_ind;
 
