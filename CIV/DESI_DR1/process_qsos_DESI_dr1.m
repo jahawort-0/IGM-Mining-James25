@@ -172,7 +172,7 @@ for all_quasar_ind = 1:numel(all_wavelengths)
     this_unmasked_wavelengths = this_wavelengths(unmasked_ind);
     this_unmasked_sigma_pixel = this_sigma_pixel(unmasked_ind); % avoiding mismathed sizes for padded variavles and NaNs
 %     % [mask_ind] remove flux pixels with pixel_mask; pixel_mask is defined
-%     % in read_spec_dr7.m
+%     % in read_spec_DESI.m
     ind = unmasked_ind & (~this_pixel_mask);
     this_wavelengths      =      this_wavelengths(ind);
     this_rest_wavelengths = this_rest_wavelengths(ind);
