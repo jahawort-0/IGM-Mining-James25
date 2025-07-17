@@ -8,7 +8,7 @@ tic;
 % load(sprintf('%s/catalog', processed_directory(releaseTest)), ...
 %     variables_to_load{:});
 
-num_quasars = numel(all_zqso_dr1);
+%num_quasars = numel(all_zqso_dr1);     %number also comes from run_script
 
 all_wavelengths    =  cell(num_quasars, 1);
 all_flux           =  cell(num_quasars, 1);
@@ -27,7 +27,7 @@ filter_flags = zeros(num_quasars, 1, 'uint8');
 %ind = (1310*(1+all_zqso_dr16)<3650) | (1548*(1+all_zqso_dr16)>10000); 
 %filter_flags(ind)  = bitset(filter_flags(ind), 2, true);
 
-num_quasars=1000;
+%num_quasars=29;
 for i = 1:num_quasars
 
   if (filter_flags(i)~=0)

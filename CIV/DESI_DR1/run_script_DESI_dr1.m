@@ -1,6 +1,6 @@
 clear
 fprintf('Setting paramters ...\n')
-num_quasars = 100;
+num_quasars = 12;
 cataloging = 1;
 preloading = 1;
 sampling   = 0;

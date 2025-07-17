@@ -108,6 +108,7 @@ base_directory = 'output';
 distfiles_directory = @(release) ...
    sprintf('%s/%s/distfiles', base_directory, release);
 
+%Need to change 
 spectra_directory   = @(release)...
    sprintf('%s/%s/sas/dr1/sdss/spectro/redux/v5_13_0/spectra/lite', base_directory, release);
 
@@ -124,6 +125,7 @@ c4_catalog_directory = @(name) ...
 
 %---------DESI dr1-------------
 
+% file_loader_DESI = @(tid)...
+%     (read_spec_DESI(sprintf("/home/cosmic/DESI_data/%s.fits",tid)));
 file_loader_DESI = @(tid)...
-    (read_spec_DESI(sprintf("/home/cosmic/DESI_data/%s.fits",tid)));
-    
+    (read_spec_DESI(sprintf("/home/cosmic/desi-env/new_test/%s.fits",tid)));

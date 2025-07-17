@@ -1,7 +1,7 @@
 % Build catalogs usable for spectra from dr16
 
 DESI_dr1q = ...
-fitsread('valid_QSO_catalog.fits', 'binarytable');
+fitsread('QSO_catalog.fits', 'binarytable');
 all_tid_dr1               = DESI_dr1q{1};
 all_zqso_dr1              = DESI_dr1q{2};
 all_RA_dr1                = DESI_dr1q{3};
