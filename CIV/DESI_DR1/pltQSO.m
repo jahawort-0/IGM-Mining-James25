@@ -31,7 +31,9 @@ function y=pltQSO(this_flux, this_wavelengths, c4_muL2, c4_muL1,  ttl, fid, flag
     hold on 
     
     %Plot pixel mask
-    p = plot(this_z_c4, flagged_pix,'k*');
+    z_flagged = this_z_c4(flagged_pix);
+    flux_flagged = this_flux(flagged_pix);
+    p = plot(z_flagged, flux_flagged,'k*');
     hold on
 
     legend({'Flux', 'M$_D$', 'M$_S$'}, 'interpreter', 'latex')
