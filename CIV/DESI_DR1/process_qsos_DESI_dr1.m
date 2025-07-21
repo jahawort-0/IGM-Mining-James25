@@ -491,7 +491,7 @@ for all_quasar_ind = 1:numel(all_wavelengths)
             indMAP = (abs(sigma_civ_samples - map_sigma_c4L2(this_quasar_ind, num_c4))<25e5);
             fprintf('min(Z(indMAP)):%.3f, max(Z(indMAP)):%.3f\n', min(sample_z_c4(indMAP)), max(sample_z_c4(indMAP)))
 
-            flagged_pix = this_pixel_mask;
+            flagged_pix = this_pixel_mask(this_quasar_ind);
             flagged_pix = flagged_pix(2:end-1);
 
             pltQSO(this_flux, this_wavelengths, c4_muL2, c4_muL1,  ttl, fid, flagged_pix)

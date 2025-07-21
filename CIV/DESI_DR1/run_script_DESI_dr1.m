@@ -1,6 +1,6 @@
 clear
 fprintf('Setting paramters ...\n')
-num_quasars = 108;
+num_quasars = 10;
 cataloging = 1;
 preloading = 1;
 sampling   = 0;
@@ -17,7 +17,7 @@ maskType = 1;
 priorType = 1;
 ind_S=1;
 saving=1;
-cores = 6;
+cores = 5;
 set_parameters_DESI_dr1
 training_set_name
 fprintf('Building catalogs ...\n')
