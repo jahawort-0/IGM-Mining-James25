@@ -42,12 +42,12 @@ function y=pltQSO(this_flux, this_wavelengths, this_mu, c4_muL2, c4_muL1, var, t
     hold on
 
     %Plot pixel mask
-    z_flagged = this_z_c4(flagged_pix);
-    flux_flagged = this_flux(flagged_pix);
-    p = plot(z_flagged, flux_flagged,'k*');
-    hold on
+    % z_flagged = this_z_c4(flagged_pix);
+    % flux_flagged = this_flux(flagged_pix);
+    % p = plot(z_flagged, flux_flagged,'k*');
+    % hold on
 
-    legend({'Flux', 'Noise Variance','M$_D$', 'M$_S$' ,'M$_N$','Flagged Pixels'}, 'interpreter', 'latex')
+    legend({'Flux', 'Noise Variance','M$_D$', 'M$_S$' ,'M$_N$'}, 'interpreter', 'latex')
     % legend({'Flux', 'M$_D$'}, 'interpreter', 'latex')
     hold on
     % xline(z_EWlow)
