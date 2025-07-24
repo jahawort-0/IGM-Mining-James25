@@ -22,6 +22,11 @@ emitted_wavelengths = ...
 observed_wavelengths = ...
     @(emitted_wavelengths,  z) ( emitted_wavelengths * (1 + z));
 
+%set figure rendering to avoid black plots
+%set(0, 'DefaultFigureRenderer', 'painters')
+%set(gcf, 'Color', 'white');
+
+
 % %-------dr7
 % release = 'dr7';
 % % download Cooksey's dr7 spectra from this page: 
@@ -30,7 +35,7 @@ observed_wavelengths = ...
 % file_loader = @(mjd, plate, fiber_id) ...
 %   (read_spec_dr7(sprintf('data/dr7/spectro/1d_26/%04i/1d/spSpec-%05i-%04i-%03i.fit',...
 %   plate, mjd, plate, fiber_id)));
-releaseTest='dr1';
+releaseTest='dr1-sigma_5-115';
 releasePrior='dr7'; %Need to decide on a prior dataset
 
 
@@ -104,6 +109,7 @@ max_civ = 7;
 % base directory for all data 
 %Change to something new on Cosmic
 base_directory = 'output';
+version = 'sigma_5-50';
 % utility functions for identifying various directories
 distfiles_directory = @(release) ...
    sprintf('%s/%s/distfiles', base_directory, release);
@@ -130,4 +136,5 @@ c4_catalog_directory = @(name) ...
 file_loader_DESI = @(tid)...
     (read_spec_DESI(sprintf("/Users/jameshaworth/IGM_Mining/108_spectra/%s.fits",tid)));
 
-addpath('/Users/jameshaworth/IGM_Mining/');
+mkdir(sprintf('%s/%s/processed', base_directory, releaseTest))
+mkdir(sprintf('%s/%s/plt', base_directory, releaseTest))
