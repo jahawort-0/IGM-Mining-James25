@@ -1,6 +1,7 @@
 clear
+tic
 fprintf('Setting paramters ...\n')
-num_quasars = 10;
+num_quasars = 100;
 cataloging = 1;
 preloading = 1;
 sampling   = 0;
@@ -17,8 +18,8 @@ maskType = 1;
 priorType = 1;
 ind_S=1;
 saving=1;
-SNR_threshhold = 0;
 cores = 5;
+SNR_threshhold = 4;
 set_parameters_DESI_dr1
 training_set_name
 fprintf('Building catalogs ...\n')
@@ -87,7 +88,7 @@ fprintf('preparing testing and prior indeces ...\n')
 test_ind = (filter_flags==0);
 if processing==1
     fprintf('processing QSO: %d to %d\n\n', ind_S, ind_S +  num_quasars-1);
-    parpool('local', cores);
+    %parpool('local', cores);
     process_qsos_DESI_dr1
     
 end
@@ -107,3 +108,5 @@ end
 if CredInt==1
     CI_sort
 end
+time_total = toc;
+fprintf('Total time: %0.3fs \n', time_total)

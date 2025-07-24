@@ -19,6 +19,11 @@ function [wavelengths, flux, noise_variance, pixel_mask, sigma_pixel] = read_spe
   % derive noise variance
   noise_variance = 1 ./ (inverse_noise_variance);
 
+  % find low signal to noise pixels (may be cosmic rays etc that have been
+  % missed)
+  signalnoise = flux./noise_variance;
+  snflag = signalnoise<2;
+
   % derive bad pixel mask, remove pixels considered very bad
   % (FULLREJECT, NOSKY, NODATA); additionally remove pixels with
   % BRIGHTSKY set
@@ -26,6 +31,6 @@ function [wavelengths, flux, noise_variance, pixel_mask, sigma_pixel] = read_spe
       (inverse_noise_variance <= 0) |(noise_variance <=0) | (sigma_pixel<=0) |...
       isnan(sigma_pixel) | (isnan(noise_variance) | isnan(inverse_noise_variance) |...
       isinf(sigma_pixel) | isinf(noise_variance) | isinf(inverse_noise_variance)|...
-      default_pixel_mask); %| bitget(and_mask, BRIGHTSKY)
+      default_pixel_mask)| snflag; %| bitget(and_mask, BRIGHTSKY)
 
 end
