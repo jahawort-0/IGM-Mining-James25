@@ -1,6 +1,6 @@
 clear
 fprintf('Setting paramters ...\n')
-num_quasars = 108;
+num_quasars = 100;
 cataloging = 1;
 preloading = 1;
 sampling   = 0;
@@ -18,6 +18,7 @@ priorType = 1;
 ind_S=1;
 saving=1;
 cores = 6;
+SNR_threshhold = 4;
 set_parameters_DESI_dr1
 training_set_name
 fprintf('Building catalogs ...\n')
@@ -86,7 +87,7 @@ fprintf('preparing testing and prior indeces ...\n')
 test_ind = (filter_flags==0);
 if processing==1
     fprintf('processing QSO: %d to %d\n\n', ind_S, ind_S +  num_quasars-1);
-    parpool('local', cores);
+    %parpool('local', cores);
     process_qsos_DESI_dr1
     
 end

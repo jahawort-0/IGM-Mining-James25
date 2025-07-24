@@ -22,6 +22,11 @@ emitted_wavelengths = ...
 observed_wavelengths = ...
     @(emitted_wavelengths,  z) ( emitted_wavelengths * (1 + z));
 
+%set figure rendering to avoid black plots
+%set(0, 'DefaultFigureRenderer', 'painters')
+%set(gcf, 'Color', 'white');
+
+
 % %-------dr7
 % release = 'dr7';
 % % download Cooksey's dr7 spectra from this page: 
@@ -71,8 +76,8 @@ uniform_max_log_nciv     = 16.1;                   % from uniform distribution
 fit_min_log_nciv         = uniform_min_log_nciv;                   % range of column density samples    [cm⁻²]
 fit_max_log_nciv         = uniform_max_log_nciv;                   % from fit to log PDF
 
-min_sigma                = 5e5;                   % cm/s -> b/sqrt(2) -> min Doppler par from Cooksey
-max_sigma                = 115e5;                   % cm/s -> b/sqrt(2) -> max Doppler par from Cooksey
+min_sigma                = 20e5;                   % cm/s -> b/sqrt(2) -> min Doppler par from Cooksey
+max_sigma                = 200e5;                   % cm/s -> b/sqrt(2) -> max Doppler par from Cooksey
 vCut                     = 3000;                    % maximum cut velocity for CIV system 
 RejectionSampling        = 0;
 % model prior parameters
@@ -104,6 +109,7 @@ max_civ = 7;
 % base directory for all data 
 %Change to something new on Cosmic
 base_directory = 'output';
+version = 'sigma_5-50';
 % utility functions for identifying various directories
 distfiles_directory = @(release) ...
    sprintf('%s/%s/distfiles', base_directory, release);

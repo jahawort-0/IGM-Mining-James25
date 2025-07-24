@@ -165,7 +165,11 @@ for all_quasar_ind = 1:numel(all_wavelengths)
     unmasked_ind = (this_rest_wavelengths >= min_lambda) & ...
         (this_rest_wavelengths <= max_lambda) & (this_sigma_pixel>0);
     
-        
+    %Filtering missed bad pixels
+    signalnoise = []; snflag = [];
+    signalnoise = this_flux./this_noise_variance;
+    snflag = signalnoise<2;
+    this_pixel_mask = this_pixel_mask | snflag;
 
     % keep complete copy of equally spaced wavelengths for absorption
     % computation
@@ -180,6 +184,17 @@ for all_quasar_ind = 1:numel(all_wavelengths)
     this_noise_variance   =   this_noise_variance(ind);
     this_sigma_pixel      =      this_sigma_pixel(ind);
     
+    %Too few pixels skip
+    if numel(this_wavelengths)<min_num_pixels
+        continue
+    end
+
+    %SNR skip filter %turn off for main run?
+    SNR = median(this_flux./sqrt(this_noise_variance));
+    if SNR<SNR_threshhold
+        continue
+    end
+
     % c4 existence prior
     less_ind = (prior.z_qsos < (z_qso + prior_z_qso_increase));
     less_systems = z_PM_prior(less_ind,:);
@@ -270,7 +285,7 @@ for all_quasar_ind = 1:numel(all_wavelengths)
             %         (abs(this_z_1548 - map_z_c4L2(this_quasar_ind, num_c4-1))>kms_to_z(dv_mask)*(1+map_z_c4L2(this_quasar_ind, num_c4-1))) & ...
             %         (abs(this_z_1550 - map_z_c4L2(this_quasar_ind, num_c4-1))>kms_to_z(dv_mask)*(1+map_z_c4L2(this_quasar_ind, num_c4-1)));
             % end
-            if (p_c4(this_quasar_ind, num_c4-1)>0.75)
+            if (p_c4(this_quasar_ind, num_c4-1)>0.75) %%<- 0.75
                 ind_not_remove = ind_not_remove  & ...
                     (abs(this_z_1548 - map_z_c4L2(this_quasar_ind, num_c4-1))>kms_to_z(dv_mask)*(1+map_z_c4L2(this_quasar_ind, num_c4-1))) & ...
                     (abs(this_z_1550 - map_z_c4L2(this_quasar_ind, num_c4-1))>kms_to_z(dv_mask)*(1+map_z_c4L2(this_quasar_ind, num_c4-1)));
@@ -484,17 +499,16 @@ for all_quasar_ind = 1:numel(all_wavelengths)
                 map_z_c4L2(this_quasar_ind, num_c4),p_c4L1(this_quasar_ind, num_c4), REW_1548_dr1(this_quasar_ind, num_c4),... 
                 median(this_flux./sqrt(this_noise_variance)))
 
-            fid = sprintf('plt-DESI-dr1/ind-%d-c4-%d.png', all_quasar_ind, num_c4);
+            fid = sprintf('plt-%s/ind-%d-c4-%d.png', testing_set_name, all_quasar_ind, num_c4);
             ind_zoomL2 = (abs(this_z_1548-map_z_c4L2(this_quasar_ind, num_c4))<5*kms_to_z(dv_mask)*(1+z_qso));
             ind_zoomL1 = (abs(this_z_1548-map_z_c4L1(this_quasar_ind, num_c4))<5*kms_to_z(dv_mask)*(1+z_qso));
             fprintf('min(Z):%.3f, max(Z):%.3f\n', min(sample_z_c4), max(sample_z_c4))
             indMAP = (abs(sigma_civ_samples - map_sigma_c4L2(this_quasar_ind, num_c4))<25e5);
             fprintf('min(Z(indMAP)):%.3f, max(Z(indMAP)):%.3f\n', min(sample_z_c4(indMAP)), max(sample_z_c4(indMAP)))
 
-            flagged_pix = this_pixel_mask;
-            flagged_pix = flagged_pix(2:end-1);
+            flagged_pix = all_pixel_mask{this_quasar_ind};
 
-            pltQSO(this_flux, this_wavelengths, c4_muL2, c4_muL1,  ttl, fid, flagged_pix)
+            pltQSO(this_flux, this_wavelengths, this_mu, c4_muL2, c4_muL1, this_noise_variance, ttl, fid, flagged_pix,ind_not_remove)
           
           
         end
