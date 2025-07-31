@@ -1,8 +1,8 @@
-function y=pltQSO(this_flux, this_wavelengths, c4_muL2, c4_muL1,  ttl, fid, flagged_pix)
+function y=pltQSO(this_flux, this_wavelengths, this_mu, c4_muL2, c4_muL1, var, ttl, fid, flagged_pix,ind_not_remove)
           
     % been applied this_pixel_mask.
-    
-    fig = figure('visible', 'off');
+    %set(groot, 'defaultFigureColor', 'white');
+    fig = figure('visible', 'off','Color','white');
     clf();
     % subplot('position', [0.05 0.49 0.90 5]);
     % construct dla_mu_map
@@ -13,9 +13,14 @@ function y=pltQSO(this_flux, this_wavelengths, c4_muL2, c4_muL1,  ttl, fid, flag
     
     %Plot data
     % p = stairs(this_z_c4(ind_not_remove), this_flux(ind_not_remove));
-    p = stairs(this_z_c4, this_flux);
+    p = stairs(this_z_c4(ind_not_remove), this_flux(ind_not_remove));
     p.LineWidth = .5;
     p.Color = [0.3010 0.7450 0.9330, 0.8];
+    hold on
+
+    %Plot variance
+    p = plot(this_z_c4,var,'k-');
+    p.LineWidth=0.5;
     hold on
 
     %Plot doublet
@@ -30,11 +35,19 @@ function y=pltQSO(this_flux, this_wavelengths, c4_muL2, c4_muL1,  ttl, fid, flag
     p.LineWidth=1.5;
     hold on 
     
-    %Plot pixel mask
-    p = plot(this_z_c4, flagged_pix,'k*');
+    %Plot continuum
+    p = plot(this_z_c4,this_mu);
+    p.Color = [0.3250 0.0980 0.8500, 0.6]; 
+    p.LineWidth=1.5;
     hold on
 
-    legend({'Flux', 'M$_D$', 'M$_S$'}, 'interpreter', 'latex')
+    %Plot pixel mask
+    % z_flagged = this_z_c4(flagged_pix);
+    % flux_flagged = this_flux(flagged_pix);
+    % p = plot(z_flagged, flux_flagged,'k*');
+    % hold on
+
+    legend({'Flux', 'Noise Variance','M$_D$', 'M$_S$' ,'M$_N$'}, 'interpreter', 'latex')
     % legend({'Flux', 'M$_D$'}, 'interpreter', 'latex')
     hold on
     % xline(z_EWlow)
@@ -99,7 +112,7 @@ function y=pltQSO(this_flux, this_wavelengths, c4_muL2, c4_muL1,  ttl, fid, flag
     % p.Color = [0.3010 0.7450 0.9330];
 
     % set(gca, 'FontSize', 15);
-    exportgraphics(fig, fid,'Resolution', 800)
+    exportgraphics(fig, fid,'Resolution', 400,'BackgroundColor','w')
     
 end
 
