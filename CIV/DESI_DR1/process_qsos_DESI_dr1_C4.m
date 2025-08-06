@@ -47,7 +47,7 @@ all_noise_variance = all_noise_variance(test_ind);
 all_pixel_mask     =     all_pixel_mask(test_ind);
 all_sigma_pixel    =    all_sigma_pixel(test_ind);
 z_qsos             =     all_zqso_dr1(test_ind);
-all_QSO_ID_dr1     =    all_QSO_ID_dr1(test_ind)
+all_QSO_ID_dr1     =    all_QSO_ID_dr1(test_ind);
 all_num_quasars    =                numel(z_qsos);
 
 
@@ -271,6 +271,19 @@ for all_quasar_ind = 1:numel(all_wavelengths)
 
         end
 
+        %Create interpolated mask for z samples
+        mask_z_1548_sample = interp1(this_z_1548, double(ind_not_remove), sample_z_c4, 'nearest', 0);
+        mask_z_1550_sample = interp1(this_z_1550, double(ind_not_remove), sample_z_c4, 'nearest', 0);
+        mask_z_sample = ~(~mask_z_1550_sample | ~mask_z_1548_sample);
+
+        %Create masked samples
+        % this_sample_z_c4 = sample_z_c4(mask_z_sample);
+        % this_log_nciv_samples = log_nciv_samples(mask_z_sample);
+        % this_nciv_samples = nciv_samples(mask_z_sample);
+        % this_sigma_civ_samples = sigma_civ_samples(mask_z_sample);
+        num_C4_samples_valid = nnz(mask_z_sample);
+
+
         log_likelihoods_no_c4(this_quasar_ind, num_c4) = ...
         log_mvnpdf_low_rank(this_flux(ind_not_remove), this_mu(ind_not_remove),...
         this_M(ind_not_remove, :), this_noise_variance(ind_not_remove));
@@ -283,6 +296,9 @@ for all_quasar_ind = 1:numel(all_wavelengths)
         fprintf(' ... log p(no CIV | D, z_QSO)     : %0.2f\n', ...
         log_posteriors_no_c4(this_quasar_ind, num_c4));
         parfor i = 1:num_C4_samples
+            if ~mask_z_sample(i)
+                continue
+            end
             % Limitting red-shift in the samples
             % absorption corresponding to this sample with one absorption line as a noise model 
 
@@ -343,7 +359,7 @@ for all_quasar_ind = 1:numel(all_wavelengths)
             max_log_likelihoodL1);
         log_likelihoods_c4L1(this_quasar_ind, num_c4) = ...
             max_log_likelihoodL1 + log(mean(sample_probabilitiesL1)) ...
-            - log(num_C4_samples)*(num_c4-1);
+            - log(num_C4_samples_valid)*(num_c4-1);
             
         log_posteriors_c4L1(this_quasar_ind, num_c4) = ...
         log_priors_c4(this_quasar_ind, num_c4) + log_likelihoods_c4L1(this_quasar_ind, num_c4);
@@ -361,7 +377,7 @@ for all_quasar_ind = 1:numel(all_wavelengths)
             exp(sample_log_likelihoods_c4L2(this_quasar_ind, :, num_c4)  ... 
             - max_log_likelihoodL2);
         log_likelihoods_c4L2(this_quasar_ind, num_c4) = ...
-            max_log_likelihoodL2 + log(mean(sample_probabilitiesL2));
+            max_log_likelihoodL2 + log(mean(sample_probabilitiesL2(mask_z_sample)));
             
             
         
@@ -423,7 +439,7 @@ for all_quasar_ind = 1:numel(all_wavelengths)
         fprintf('REW(%d,%d)=%e\n', this_quasar_ind, num_c4, REW_1548_dr1(this_quasar_ind, num_c4));
         
         % plotting
-        if(plotting==1)% && p_c4(this_quasar_ind, num_c4)>0.85) 
+        if((plotting==1) && p_c4(this_quasar_ind, num_c4)>0.85) 
         
             max_log_posteriors = max([log_posteriors_no_c4(this_quasar_ind, num_c4),...
                                      log_posteriors_c4L1(this_quasar_ind, num_c4),...
@@ -456,7 +472,7 @@ for all_quasar_ind = 1:numel(all_wavelengths)
                 map_z_c4L2(this_quasar_ind, num_c4),p_c4L1(this_quasar_ind, num_c4), REW_1548_dr1(this_quasar_ind, num_c4),... 
                 median(this_flux./sqrt(this_noise_variance)),map_sigma_c4L2(this_quasar_ind, num_c4))
 
-            fid = sprintf('%s/%s/plt/ind-%d-c4-%d.png', base_directory, releaseTest, all_quasar_ind, num_c4);
+            fid = sprintf('%s/%s/plt/ind-%d-c4-%d-%s.png', base_directory, releaseTest, all_quasar_ind, num_c4,all_QSO_ID_dr1{all_quasar_ind});
             ind_zoomL2 = (abs(this_z_1548-map_z_c4L2(this_quasar_ind, num_c4))<5*kms_to_z(dv_mask)*(1+z_qso));
             ind_zoomL1 = (abs(this_z_1548-map_z_c4L1(this_quasar_ind, num_c4))<5*kms_to_z(dv_mask)*(1+z_qso));
             fprintf('min(Z):%.3f, max(Z):%.3f\n', min(sample_z_c4), max(sample_z_c4))
