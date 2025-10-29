@@ -35,7 +35,7 @@ observed_wavelengths = ...
 % file_loader = @(mjd, plate, fiber_id) ...
 %   (read_spec_dr7(sprintf('data/dr7/spectro/1d_26/%04i/1d/spSpec-%05i-%04i-%03i.fit',...
 %   plate, mjd, plate, fiber_id)));
-releaseTest='dr1-sigma_5-115_N2_nciv-120-161_mask300_qsos672';
+releaseTest='10-23-25-nAVG0-PL1B_3';
 releasePrior='dr7'; %Need to decide on a prior dataset
 
 
@@ -61,7 +61,7 @@ dlambda            = 0.8;                    % separation of wavelength grid    
 k                  = 20;                      % rank of non-diagonal contribution
 max_noise_variance = 0.5^2;                   % maximum pixel noise allowed during model training
 h                  = 2;                     % masking par to remove CIV region 
-nAVG               = 2;                     % number of points added between two 
+nAVG               = 0;                     % number of points added between two 
                                             % observed wavelengths to make the Voigt finer
 % optimization parameters
 minFunc_options =               ...           % optimization options for model fitting
@@ -82,6 +82,7 @@ vCut                     = 3000;                    % maximum cut velocity for C
 RejectionSampling        = 0;
 % model prior parameters
 prior_z_qso_increase = kms_to_z(30000);       % use QSOs with z < (z_QSO + x) for prior
+PL1B = 3.0; %prob L1 model boost, multiplies c4 prior by this factor to boost L1 probability
 
 % instrumental broadening parameters
 width = 3;                                    % width of Gaussian broadening (# pixels)
@@ -133,7 +134,7 @@ c4_catalog_directory = @(name) ...
 % file_loader_DESI = @(tid)...
 %     (read_spec_DESI(sprintf("/home/cosmic/DESI_data/%s.fits",tid)));
 file_loader_DESI = @(tid)...
-    (read_spec_DESI(sprintf("/home/cosmic/desi-env/new_test/%s.fits",tid)));
+    (read_spec_DESI(sprintf("/home/cosmic/desi-env/validation_test/%s.fits",tid)));
 
 mkdir(sprintf('%s/%s/processed', base_directory, releaseTest))
 mkdir(sprintf('%s/%s/plt', base_directory, releaseTest))

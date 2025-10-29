@@ -13,7 +13,7 @@ function y=pltQSO(this_flux, this_wavelengths, this_mu, c4_muL2, c4_muL1, var, t
     
     %Plot data
     % p = stairs(this_z_c4(ind_not_remove), this_flux(ind_not_remove));
-    p = stairs(this_z_c4(ind_not_remove), this_flux(ind_not_remove));
+    p = plot(this_z_c4(ind_not_remove), this_flux(ind_not_remove),'b-'); %<- (ind_not_remove)
     p.LineWidth = .5;
     p.Color = [0.3010 0.7450 0.9330, 0.8];
     hold on
@@ -27,6 +27,8 @@ function y=pltQSO(this_flux, this_wavelengths, this_mu, c4_muL2, c4_muL1, var, t
     p = plot(this_z_c4, c4_muL2);
     p.Color = [0.8500 0.3250 0.0980, 0.6]; 
     p.LineWidth=1.5;
+    %this bit adds interpolated points (not)
+    %plot(this_z_c4,c4_muL2,'*','Color',[0.7500 0.2250 0.0480, 0.6],'MarkerSize',2)
     hold on
 
     %Plot Singlet
@@ -47,8 +49,8 @@ function y=pltQSO(this_flux, this_wavelengths, this_mu, c4_muL2, c4_muL1, var, t
     % p = plot(z_flagged, flux_flagged,'k*');
     % hold on
 
-    legend({'Flux', 'Noise Variance','M$_D$', 'M$_S$' ,'M$_N$'}, 'interpreter', 'latex')
-    % legend({'Flux', 'M$_D$'}, 'interpreter', 'latex')
+    %legend({'Flux', 'Noise Variance','M$_D$', 'M$_S$' ,'M$_N$'}, 'interpreter', 'latex')
+     legend({'Flux', 'M$_D$','M$_N$'}, 'interpreter', 'latex')
     hold on
     % xline(z_EWlow)
     % hold on

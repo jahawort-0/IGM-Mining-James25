@@ -104,7 +104,7 @@ for all_quasar_ind = 1:numel(all_wavelengths)
 
     
     this_quasar_ind = this_quasar_ind + 1;
-    
+   
     tic;
     z_qso = z_qsos(all_quasar_ind);
     % fprintf('processing quasar %i/%i (z_QSO = %0.4f) ...\n', ...
@@ -173,6 +173,7 @@ for all_quasar_ind = 1:numel(all_wavelengths)
         fprintf(' ...     p(no CIV  | z_QSO)       : %0.3f\n', exp(log_priors_no_c4(this_quasar_ind, i)) );
     end
     log_priors_c4(this_quasar_ind,:) = log(this_p_c4(:));
+    log_priors_L1(this_quasar_ind,:) = PL1B .* log_priors_c4(this_quasar_ind,:); % Singlet model prior
 
     % interpolate model onto given wavelengths
     this_mu = mu_interpolator( this_rest_wavelengths);
@@ -231,6 +232,15 @@ for all_quasar_ind = 1:numel(all_wavelengths)
     % (normalized offset, log(N HI)) pairs
     lenW_unmasked = length(this_unmasked_wavelengths);
     ind_not_remove = true(size(this_flux));
+
+    % FitDist - fit quality distribution
+    if (FitDist == 1)
+        fit_distribution_DESI_dr1_c4
+        % if (abs(mean_diff) > 0.3)
+        %     continue
+        % end
+    end
+        
     for num_c4=1:max_civ
         fprintf('num_civ:%d\n',num_c4);
         this_z_1548 = (this_wavelengths / civ_1548_wavelength) - 1;
@@ -350,7 +360,7 @@ for all_quasar_ind = 1:numel(all_wavelengths)
         end
     
             
-        % compute sample probabilities and log likelihood of DLA model in
+        % compute sample probabilities and log likelihood of singlet L1 model in
         % numerically safe manner for one line
     
         max_log_likelihoodL1 = max(sample_log_likelihoods_c4L1(this_quasar_ind, :));
@@ -362,7 +372,7 @@ for all_quasar_ind = 1:numel(all_wavelengths)
             - log(num_C4_samples_valid)*(num_c4-1);
             
         log_posteriors_c4L1(this_quasar_ind, num_c4) = ...
-        log_priors_c4(this_quasar_ind, num_c4) + log_likelihoods_c4L1(this_quasar_ind, num_c4);
+        log_priors_L1(this_quasar_ind, num_c4) + log_likelihoods_c4L1(this_quasar_ind, num_c4);
         
         fprintf(' ... log p(D | z_QSO,    L1)     : %0.2f\n', ...
             log_likelihoods_c4L1(this_quasar_ind, num_c4));
@@ -370,7 +380,7 @@ for all_quasar_ind = 1:numel(all_wavelengths)
             log_posteriors_c4L1(this_quasar_ind, num_c4));
         
         
-        % compute sample probabilities and log likelihood of DLA model in
+        % compute sample probabilities and log likelihood of doublet L2 model in
         % numerically safe manner for  doublet 
         max_log_likelihoodL2 = max(sample_log_likelihoods_c4L2(this_quasar_ind, :, num_c4));
         sample_probabilitiesL2 = ...
@@ -439,7 +449,7 @@ for all_quasar_ind = 1:numel(all_wavelengths)
         fprintf('REW(%d,%d)=%e\n', this_quasar_ind, num_c4, REW_1548_dr1(this_quasar_ind, num_c4));
         
         % plotting
-        if((plotting==1) && p_c4(this_quasar_ind, num_c4)>0.85) 
+        if(((plotting==1) && p_c4(this_quasar_ind, num_c4)>0.85) || ((plotting==1) && (num_c4==1))) 
         
             max_log_posteriors = max([log_posteriors_no_c4(this_quasar_ind, num_c4),...
                                      log_posteriors_c4L1(this_quasar_ind, num_c4),...
@@ -467,10 +477,10 @@ for all_quasar_ind = 1:numel(all_wavelengths)
             
             
 
-            ttl = sprintf('ID:%s, zQSO:%.2f\n P(CIV)=%.2f, z_{CIV}=%.3f, P(S)=%.2f, REW=%.3f, SN=%.2f, sigma=%.3f', ...
+            ttl = sprintf('ID:%s, zQSO:%.2f\n P(CIV)=%.2f, z_{CIV}=%.3f, P(S)=%.2f, REW=%.3f, SN=%.2f, sigma=%.3f, N=%.2f', ...
                 all_QSO_ID_dr1{all_quasar_ind}, z_qso, p_c4(this_quasar_ind, num_c4), ...
                 map_z_c4L2(this_quasar_ind, num_c4),p_c4L1(this_quasar_ind, num_c4), REW_1548_dr1(this_quasar_ind, num_c4),... 
-                median(this_flux./sqrt(this_noise_variance)),map_sigma_c4L2(this_quasar_ind, num_c4))
+                median(this_flux./sqrt(this_noise_variance)),map_sigma_c4L2(this_quasar_ind, num_c4),map_N_c4L2(this_quasar_ind, num_c4))
 
             fid = sprintf('%s/%s/plt/ind-%d-c4-%d-%s.png', base_directory, releaseTest, all_quasar_ind, num_c4,all_QSO_ID_dr1{all_quasar_ind});
             ind_zoomL2 = (abs(this_z_1548-map_z_c4L2(this_quasar_ind, num_c4))<5*kms_to_z(dv_mask)*(1+z_qso));

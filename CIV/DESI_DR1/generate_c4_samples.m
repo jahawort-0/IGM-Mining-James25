@@ -20,7 +20,7 @@ sequence = scramble(haltonset(3), 'rr2');
 % the first dimension can be used directly for the uniform prior over
 % offsets
 offset_z_samples  = sequence(1:num_C4_samples, 1)';
-offset_sigma_samples = sequence(1:num_C4_samples, 1)';
+offset_sigma_samples = sequence(1:num_C4_samples, 2)';
 % we must transform the second dimension to have the correct marginal
 % distribution for our chosen prior over column density, which is a
 % mixture of a uniform distribution on log₁₀ N_CIV and a distribution
@@ -91,5 +91,5 @@ variables_to_save = {'offset_z_samples', 'offset_sigma_samples', 'log_nciv_sampl
 fig = figure();
 
 histogram(log_nciv_samples)
-exportgraphics(fig, sprintf('%s-hist2D.png', training_set_name), 'Resolution', 800)
+%exportgraphics(fig, sprintf('%s-hist2D.png', training_set_name), 'Resolution', 800)
 
