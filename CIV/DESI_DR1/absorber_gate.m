@@ -1,4 +1,4 @@
-function [B,chi,absorber_gate_mask] = absorber_gate(flux,wave,continuum,doublet,z_abs,sig)
+function [B,chi,absorber_gate_mask] = absorber_gate(flux,wave,continuum,doublet)
 %UNTITLED Summary of this function goes here
 %   Detailed explanation goes here
 % arguments (Input)
@@ -13,20 +13,15 @@ function [B,chi,absorber_gate_mask] = absorber_gate(flux,wave,continuum,doublet,
 %     B
 % end
 
-% define value commands for troubleshooting
+% TROUBLESHOOTING: define value commands
 % flux = this_flux; wave = this_wavelengths; continuum = this_mu; doublet = c4_muL2;
 % z_abs = map_z_c4L2(this_quasar_ind, num_c4); sig = map_sigma_c4L2(this_quasar_ind, num_c4);
 
-%define constants and useful conversion formulas
-civ_1548_wavelength = 1548.1949462890625; %constants
-civ_1550_wavelength =  1550.77001953125;
-speed_of_light = 299792458;
-kms_to_z = @(kms) (kms * 1000) / speed_of_light; %functions to convert quantities
-wave2z = @(wavelength) (wavelength / civ_1548_wavelength) - 1;
-z2wave = @(z) civ_1548_wavelength(z+1);
-
 
 %define mask by sigma
+% civ_1548_wavelength = 1548.1949462890625; %constants
+% civ_1550_wavelength =  1550.77001953125;
+% speed_of_light = 299792458;
 %sigma_z = sig / speed_of_light; %redshift width of single absorption line
     %define interval we are looking at
     %min is 1548 - 3sigma
@@ -50,7 +45,7 @@ flux_mask = flux(mask);
 continuum_mask = continuum(mask);
 doublet_mask = doublet(mask);
 
-%plotting for troubleshooting
+%TROUBLESHOOTING: plotting
 % fig = figure('visible', 'on');
 % plot(wave_mask,flux_mask,'b-'); hold on
 % plot(wave_mask,continuum_mask,'m-')

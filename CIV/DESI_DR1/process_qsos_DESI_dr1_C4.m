@@ -85,8 +85,10 @@ map_sigma_c4L2              = nan(num_quasars, max_civ);
 p_c4                        = nan(num_quasars, max_civ);
 p_c4L1                      = nan(num_quasars, max_civ);
 p_no_c4                     = nan(num_quasars, max_civ);
-REW_1548_dr1                    = nan(num_quasars, max_civ);
+REW_1548_dr1                = nan(num_quasars, max_civ);
 num_pixel_civ               = nan(num_quasars, max_civ, 2);
+all_B                       = nan(num_quasars, max_civ);
+fit_chi2                    = nan(num_quasars,1);
 % min_sigma = 5e5;
 sigma_civ_samples = min_sigma + (max_sigma-min_sigma)*offset_sigma_samples;
 
@@ -173,7 +175,7 @@ for all_quasar_ind = 1:numel(all_wavelengths)
         fprintf(' ...     p(no CIV  | z_QSO)       : %0.3f\n', exp(log_priors_no_c4(this_quasar_ind, i)) );
     end
     log_priors_c4(this_quasar_ind,:) = log(this_p_c4(:));
-    log_priors_L1(this_quasar_ind,:) = PL1B .* log_priors_c4(this_quasar_ind,:); % Singlet model prior
+    log_priors_L1(this_quasar_ind,:) = log_priors_c4(this_quasar_ind,:); % Singlet model prior
 
     % interpolate model onto given wavelengths
     this_mu = mu_interpolator( this_rest_wavelengths);
@@ -239,6 +241,11 @@ for all_quasar_ind = 1:numel(all_wavelengths)
         % if (abs(mean_diff) > 0.3)
         %     continue
         % end
+    end
+
+    % Chi^2 calc, assess quality of continuum fit
+    if (ChiSquare == 1)
+        chisquare_DESI_CIV
     end
         
     for num_c4=1:max_civ
@@ -426,7 +433,7 @@ for all_quasar_ind = 1:numel(all_wavelengths)
         bsxfun(@times, model_posteriors, 1 ./ sum(model_posteriors, 2));
     
         p_no_c4(this_quasar_ind, num_c4) = model_posteriors(1);
-        p_c4L1(this_quasar_ind, num_c4)  = model_posteriors(2);
+        p_c4L1(this_quasar_ind, num_c4)  = L1B * model_posteriors(2); %%%<---
         p_c4(this_quasar_ind, num_c4)    = 1 - p_no_c4(this_quasar_ind, num_c4) -...
                                     p_c4L1(this_quasar_ind, num_c4);
 
@@ -447,9 +454,22 @@ for all_quasar_ind = 1:numel(all_wavelengths)
         REW_1548_dr1(this_quasar_ind, num_c4) = trapz(this_unmasked_wavelengths, 1-aL1)/(1+z_qso);
 
         fprintf('REW(%d,%d)=%e\n', this_quasar_ind, num_c4, REW_1548_dr1(this_quasar_ind, num_c4));
+
+        %new B_gate FUNCTION
+        absorptionL2_fine= voigt_iP(padded_wavelengths_fine,...
+             map_z_c4L2(this_quasar_ind,  num_c4), 10^map_N_c4L2(this_quasar_ind, num_c4),...
+             num_lines, map_sigma_c4L2(this_quasar_ind, num_c4), padded_sigma_pixels_fine);        
+        absorptionL2 = Averager(absorptionL2_fine, nAVG, lenW_unmasked);
+        absorptionL2 = absorptionL2(ind);
+        c4_muL2     = this_mu     .* absorptionL2;
+
+        [B,chi,absorber_gate_mask] = absorber_gate(this_flux,this_wavelengths,this_mu,c4_muL2);
+        all_B(this_quasar_ind,num_c4) = B;
+        %B_gate = (B <= 0.85);
         
         % plotting
-        if(((plotting==1) && p_c4(this_quasar_ind, num_c4)>0.85) || ((plotting==1) && (num_c4==1))) 
+        if ((plotting == 1) && (num_c4 == 1))
+            %(((plotting==1) && p_c4(this_quasar_ind, num_c4)>0.85 && (all_B(this_quasar_ind,num_c4)<= 0.85)))% || ((plotting==1) && (num_c4==1))) 
         
             max_log_posteriors = max([log_posteriors_no_c4(this_quasar_ind, num_c4),...
                                      log_posteriors_c4L1(this_quasar_ind, num_c4),...
@@ -474,13 +494,14 @@ for all_quasar_ind = 1:numel(all_wavelengths)
             absorptionL2 = Averager(absorptionL2_fine, nAVG, lenW_unmasked);
             absorptionL2 = absorptionL2(ind);
             c4_muL2    = this_mu     .* absorptionL2;
-            
-            
+      
 
-            ttl = sprintf('ID:%s, zQSO:%.2f\n P(CIV)=%.2f, z_{CIV}=%.3f, P(S)=%.2f, REW=%.3f, SN=%.2f, sigma=%.3f, N=%.2f', ...
+
+            ttl = sprintf('ID:%s, zQSO:%.2f\n P(CIV)=%.2f, z_{CIV}=%.3f, P(S)=%.2f, REW=%.3f, SN=%.2f, sigma=%.3f, N=%.2f,B=%.3f ,Chi^2=%.3f', ...
                 all_QSO_ID_dr1{all_quasar_ind}, z_qso, p_c4(this_quasar_ind, num_c4), ...
                 map_z_c4L2(this_quasar_ind, num_c4),p_c4L1(this_quasar_ind, num_c4), REW_1548_dr1(this_quasar_ind, num_c4),... 
-                median(this_flux./sqrt(this_noise_variance)),map_sigma_c4L2(this_quasar_ind, num_c4),map_N_c4L2(this_quasar_ind, num_c4))
+                median(this_flux./sqrt(this_noise_variance)),map_sigma_c4L2(this_quasar_ind, num_c4),map_N_c4L2(this_quasar_ind, num_c4)...
+                ,all_B(this_quasar_ind,num_c4),fit_chi2(this_quasar_ind))
 
             fid = sprintf('%s/%s/plt/ind-%d-c4-%d-%s.png', base_directory, releaseTest, all_quasar_ind, num_c4,all_QSO_ID_dr1{all_quasar_ind});
             ind_zoomL2 = (abs(this_z_1548-map_z_c4L2(this_quasar_ind, num_c4))<5*kms_to_z(dv_mask)*(1+z_qso));
@@ -491,7 +512,8 @@ for all_quasar_ind = 1:numel(all_wavelengths)
 
             flagged_pix = all_pixel_mask{this_quasar_ind};
 
-            pltQSO(this_flux, this_wavelengths, this_mu, c4_muL2, c4_muL1, this_noise_variance, ttl, fid, flagged_pix,ind_not_remove)
+            pltQSO(this_flux, this_wavelengths, this_mu, c4_muL2, c4_muL1, this_noise_variance, ttl, fid, flagged_pix,ind_not_remove,...
+                normalization_min_lambda, normalization_max_lambda,z_qso,absorber_gate_mask)
           
           
         end
@@ -519,7 +541,7 @@ if saving==1
         'log_posteriors_no_c4', 'log_posteriors_c4L1', 'log_posteriors_c4L2',...
         'model_posteriors', 'p_no_c4', 'p_c4L1' ...
         'map_z_c4L2', 'map_N_c4L2', 'map_sigma_c4L2', 'p_c4', 'REW_1548_dr1',...
-        'map_z_c4L1', 'map_N_c4L1', 'map_sigma_c4L1'};
+        'map_z_c4L1', 'map_N_c4L1', 'map_sigma_c4L1','all_B','fit_chi2'};
 
     filename = sprintf('%s/processed_qsos_tst_%s_S_%d_E_%d.mat', ...
         processed_directory(releaseTest), ...

@@ -1,18 +1,19 @@
 clear
 tic
 fprintf('Setting paramters ...\n')
-num_quasars = 100;
+num_quasars = 1000;
 cataloging = 1;
 preloading = 1;
-sampling   = 1; %Sample plot saving issue?
+sampling   = 0; %Sample plot saving issue?
 plotting   = 1;
 processing = 1;
 merging    = 0;
-EWer       =0;
-pltP       =0;
-CredInt    =0;
+EWer       = 0;
+pltP       = 0;
+CredInt    = 0;
 FitDist    = 0;
-dv_mask    = 350; 
+ChiSquare  = 1;
+dv_mask    = 350;  
 HPCC = 0;
 voigtPrep = 0;
 maskType = 1;

@@ -1,4 +1,4 @@
-function y=pltQSO(this_flux, this_wavelengths, this_mu, c4_muL2, c4_muL1, var, ttl, fid, flagged_pix,ind_not_remove)
+function y=pltQSO(this_flux, this_wavelengths, this_mu, c4_muL2, c4_muL1, var, ttl, fid, flagged_pix,ind_not_remove,norm_min, norm_max,z_qso,abs_mask)
           
     % been applied this_pixel_mask.
     %set(groot, 'defaultFigureColor', 'white');
@@ -17,6 +17,21 @@ function y=pltQSO(this_flux, this_wavelengths, this_mu, c4_muL2, c4_muL1, var, t
     p.LineWidth = .5;
     p.Color = [0.3010 0.7450 0.9330, 0.8];
     hold on
+
+    %highlight absorber gate range
+    % p = plot(this_z_c4(abs_mask), this_flux(abs_mask),'b-'); %<- (ind_not_remove)
+    % p.LineWidth = 0.5;
+    % p.Color = [0.2 0 0.8, 0.9];
+
+    %highlight normalization range
+    % rest_wavelengths = this_wavelengths /(z_qso+1); 
+    % range = ((rest_wavelengths>=norm_min)&(rest_wavelengths<=norm_max));
+    % this_flux_range = this_flux(range);
+    % this_z_range = (this_wavelengths(range) / civ_1548_wavelength) - 1;
+    % p = plot(this_z_range, this_flux_range,'b-'); %<- (ind_not_remove)
+    % p.LineWidth = 0.5;
+    % p.Color = [0.7010 0.5450 0.7330, 0.8];
+
 
     %Plot variance
     p = plot(this_z_c4,var,'k-');
