@@ -67,28 +67,29 @@ M_interpolator = ...
 % initialize results with nan
 min_z_c4s                   = nan(num_quasars, 1);
 max_z_c4s                   = nan(num_quasars, 1);
-log_priors_no_c4            = nan(num_quasars, max_c4);
-log_priors_c4               = nan(num_quasars, max_c4);
-log_likelihoods_no_c4       = nan(num_quasars, max_c4);
-sample_log_likelihoods_c4L1 = nan(num_quasars, num_c4_samples);
-sample_log_likelihoods_c4L2 = nan(num_quasars, num_c4_samples, max_c4);
-log_likelihoods_c4L1        = nan(num_quasars, max_c4);
-log_likelihoods_c4L2        = nan(num_quasars, max_c4);
-log_posteriors_no_c4        = nan(num_quasars, max_c4);
-log_posteriors_c4L1         = nan(num_quasars, max_c4);
-log_posteriors_c4L2         = nan(num_quasars, max_c4);
-map_N_c4L1                  = nan(num_quasars, max_c4);
-map_N_c4L2                  = nan(num_quasars, max_c4);
-map_z_c4L1                  = nan(num_quasars, max_c4);
-map_z_c4L2                  = nan(num_quasars, max_c4);
-map_sigma_c4L1              = nan(num_quasars, max_c4);
-map_sigma_c4L2              = nan(num_quasars, max_c4);
-p_c4                        = nan(num_quasars, max_c4);
-p_c4L1                      = nan(num_quasars, max_c4);
-p_no_c4                     = nan(num_quasars, max_c4);
-REW_2796_dr7                = nan(num_quasars, max_c4);
-num_pixel_c4               = nan(num_quasars, max_c4, 2);
-all_B                       = nan(num_quasars, max_c4);
+log_priors_no_c4            = nan(num_quasars, max_civ);
+log_priors_c4               = nan(num_quasars, max_civ);
+log_likelihoods_no_c4       = nan(num_quasars, max_civ);
+sample_log_likelihoods_c4L1 = nan(num_quasars, num_C4_samples);
+sample_log_likelihoods_c4L2 = nan(num_quasars, num_C4_samples, max_civ);
+log_likelihoods_c4L1        = nan(num_quasars, max_civ);
+log_likelihoods_c4L2        = nan(num_quasars, max_civ);
+log_posteriors_no_c4        = nan(num_quasars, max_civ);
+log_posteriors_c4L1         = nan(num_quasars, max_civ);
+log_posteriors_c4L2         = nan(num_quasars, max_civ);
+map_N_c4L1                  = nan(num_quasars, max_civ);
+map_N_c4L2                  = nan(num_quasars, max_civ);
+map_z_c4L1                  = nan(num_quasars, max_civ);
+map_z_c4L2                  = nan(num_quasars, max_civ);
+map_sigma_c4L1              = nan(num_quasars, max_civ);
+map_sigma_c4L2              = nan(num_quasars, max_civ);
+p_c4                        = nan(num_quasars, max_civ);
+p_c4L1                      = nan(num_quasars, max_civ);
+p_no_c4                     = nan(num_quasars, max_civ);
+REW_1548_dr1                = nan(num_quasars, max_civ);
+REW_1550_dr1                = nan(num_quasars, max_civ);
+num_pixel_c4               = nan(num_quasars, max_civ, 2);
+all_B                       = nan(num_quasars, max_civ);
 fit_chi2                    = nan(num_quasars,1);
 masked_abs_pixels           = nan(num_quasars,5);
 c4_samples = (max_sigma-min_sigma)*offset_sigma_samples + min_sigma;
@@ -107,7 +108,10 @@ qso_NaN_replacedL1_ind = [];
 
 all_SNR = nan(numel(all_wavelengths),1);
 
+this_quasar_ind = 0;
 for quasar_ind = 1:numel(all_wavelengths)
+    all_quasar_ind = quasar_ind;
+    this_quasar_ind = this_quasar_ind + 1;
 
     % if z_PM_test(quasar_ind,1)==-1
     %     continue
@@ -149,7 +153,7 @@ for quasar_ind = 1:numel(all_wavelengths)
     % this_pixel_mask(unmasked_ind) = this_pixel_mask(unmasked_ind) | snflag;
 
     skylines = (abs(this_wavelengths-5579)<5) | (abs(this_wavelengths-6302)<5);
-    masked_regions = skylines | ~unmasked_ind | ~(this_rest_wavelengths <= 2780); % change 2780 later
+    masked_regions = skylines | ~unmasked_ind | ~(this_rest_wavelengths <= 1570); % change 1570 later
     masked_abs_pixels(quasar_ind,1) = nnz(this_isAbs_15 & masked_regions)/nnz(this_isAbs_15);
     masked_abs_pixels(quasar_ind,2) = nnz(this_isAbs_20 & masked_regions)/nnz(this_isAbs_20);
     masked_abs_pixels(quasar_ind,3) = nnz(this_isAbs_30 & masked_regions)/nnz(this_isAbs_30);
@@ -183,7 +187,7 @@ for quasar_ind = 1:numel(all_wavelengths)
 
     this_num_quasars = nnz(less_ind);
     this_p_c4(1) = nnz(less_systems(:,1)>0 )/this_num_quasars;  % at least 1
-    for i=2:max_c4
+    for i=2:max_civ
         this_p_c4(i) = nnz(less_systems(:,i)>0 )/nnz(less_systems(:,i-1)>0); % at least n given at least n-1
         if (this_p_c4(i-1)==0)
         this_p_c4(i) = 0;
@@ -192,7 +196,7 @@ for quasar_ind = 1:numel(all_wavelengths)
     end
 
     fprintf('\n');
-    for i = 1:max_c4
+    for i = 1:max_civ
         fprintf(' ...     p(%i  CIVs | z_QSO)       : %0.3f\n', i, this_p_c4(i));
             log_priors_no_c4(quasar_ind, i) = ...
                 log(1 - this_p_c4(i));
@@ -200,6 +204,8 @@ for quasar_ind = 1:numel(all_wavelengths)
     end
 
     log_priors_c4(quasar_ind,:) = log(this_p_c4(:));
+    log_priors_L1(this_quasar_ind,:) = log_priors_c4(this_quasar_ind,:); % Singlet model prior
+
 
     % interpolate model onto given wavelengths
     this_mu = mu_interpolator( this_rest_wavelengths);
@@ -326,9 +332,9 @@ for num_c4=1:max_civ
         fprintf(' ... log p(no CIV | D, z_QSO)     : %0.2f\n', ...
         log_posteriors_no_c4(this_quasar_ind, num_c4));
         parfor i = 1:num_C4_samples
-            if ~mask_z_sample(i)
-                continue
-            end
+            % if ~mask_z_sample(i)
+            %     continue
+            % end
             % Limitting red-shift in the samples
             % absorption corresponding to this sample with one absorption line as a noise model 
 
@@ -445,7 +451,7 @@ for num_c4=1:max_civ
         bsxfun(@times, model_posteriors, 1 ./ sum(model_posteriors, 2));
     
         p_no_c4(this_quasar_ind, num_c4) = model_posteriors(1);
-        p_c4L1(this_quasar_ind, num_c4)  = L1B * model_posteriors(2); %%%<---
+        p_c4L1(this_quasar_ind, num_c4)  = model_posteriors(2); %%%<---
         p_c4(this_quasar_ind, num_c4)    = 1 - p_no_c4(this_quasar_ind, num_c4) -...
                                     p_c4L1(this_quasar_ind, num_c4);
 
@@ -463,9 +469,22 @@ for num_c4=1:max_civ
         padded_sigma_pixels_fine);
 
         aL1 = Averager(aL1_fine, nAVG, lenW_unmasked);
-        REW_1548_dr1(this_quasar_ind, num_c4) = trapz(this_unmasked_wavelengths, 1-aL1)/(1+z_qso);
+        aL1 = aL1(ind);
+        REW_1548_dr1(this_quasar_ind, num_c4) = trapz(this_unmasked_wavelengths(ind), 1-aL1)/(1+z_qso);
 
         fprintf('REW(%d,%d)=%e\n', this_quasar_ind, num_c4, REW_1548_dr1(this_quasar_ind, num_c4));
+
+        aL2_fine = voigt_iP(padded_wavelengths_fine,...
+            map_z_c4L2(this_quasar_ind, num_c4), ...
+            10^map_N_c4L2(this_quasar_ind, num_c4), 2,...
+            map_sigma_c4L2(this_quasar_ind, num_c4), ...
+            padded_sigma_pixels_fine);
+        aL2_fine_NaNs = isnan(aL2_fine); % replaces NaN's created by voigt profile, maybe temp fix
+        aL2_fine(aL2_fine_NaNs) = 1;
+
+        aL2 = Averager(aL2_fine, nAVG, lenW_unmasked);
+        aL2 = aL2(ind);
+        REW_1550_dr1(this_quasar_ind, num_c4) = trapz(this_unmasked_wavelengths(ind), 1-(aL2./aL1))/(1+z_qso);
 
         %new B_gate FUNCTION
         absorptionL2_fine= voigt_iP(padded_wavelengths_fine,...
@@ -551,7 +570,7 @@ variables_to_save = {'releaseTest', 'training_set_name', ...
     'sample_log_likelihoods_c4L2', 'log_likelihoods_c4L2'...
     'log_posteriors_no_c4', 'log_posteriors_c4L1', 'log_posteriors_c4L2',...
     'model_posteriors', 'p_no_c4', 'p_c4L1' ...
-    'map_z_c4L2', 'map_N_c4L2', 'map_sigma_c4L2' ,'p_c4', 'REW_1548_dr1',...
+    'map_z_c4L2', 'map_N_c4L2', 'map_sigma_c4L2' ,'p_c4', 'REW_1548_dr1','REW_1550_dr1',...
     'all_SNR','all_B','fit_chi2','masked_abs_pixels'};
 
 filename = sprintf('%s/processed_sigma_125_Spline_2200-2300_%s.mat', ...

@@ -1,11 +1,11 @@
 clear
 fprintf('Setting paramters ...\n')
 % Load the no absorber quasars here
-num_quasars = 1000;
-cataloging = 0;
-preloading =0;
-sampling   = 0;
-plotting   = 1;
+num_quasars = 1850;
+cataloging = 1;
+preloading =1;
+sampling   = 1;
+plotting   = 0;
 processing = 1;
 merging    = 0;
 EWer       =0;
@@ -22,7 +22,7 @@ ind_S=1;
 saving=1;
 cores = 5;
 SNR_threshhold = 2;
-inject_set_parameters_DESI_dr1_C4
+inject_set_parameters_DESI_dr1_c4
 training_set_name
 fprintf('Building catalogs ...\n')
 if cataloging == 1

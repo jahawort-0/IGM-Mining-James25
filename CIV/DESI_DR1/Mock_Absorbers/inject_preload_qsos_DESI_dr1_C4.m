@@ -5,10 +5,11 @@
 % load QSO catalog
 tic;
 
-load(sprintf('%s/catalog', processed_directory(releaseTest)), ...
-   variables_to_load{:});
-load(sprintf('%s/SALSA_catalog', processed_directory(releaseTest)), ...
-   variables_to_load{:});
+% If build catalog is toggled off, need to turn these on
+% load(sprintf('%s/catalog', processed_directory(releaseTest)), ...
+%    variables_to_load{:});
+% load(sprintf('%s/SALSA_catalog.mat', processed_directory(releaseTest)), ...
+%    variables_to_load{:});
 
 % load all optical depth data
 data = fitsread('/home/cosmic/desi-env/sim_abs_CIV/Tau_CIV_z1.5.fits');
@@ -71,19 +72,23 @@ for i = 1:num_quasars
     this_pixel_mask((abs(this_wavelengths-5579)<5) | (abs(this_wavelengths-6302)<5))=1;
     this_rest_wavelengths = emitted_wavelengths(this_wavelengths, all_zqso_dr1(i));
     % -- Normalization 
-    ind = (this_rest_wavelengths >= normalization_min_lambda_3) & ...
-           (this_rest_wavelengths <= normalization_max_lambda_3) & ...
+    ind = (this_rest_wavelengths >= normalization_min_lambda) & ...
+           (this_rest_wavelengths <= normalization_max_lambda) & ...
            (~this_pixel_mask);
  
   this_median = median(this_flux(ind), "omitmissing");
   
-  % bit 2: cannot normalize (all normalizing pixels are masked)
+  % bit 3: cannot normalize (all normalizing pixels are masked)
   if (isnan(this_median))
     filter_flags(i) = bitset(filter_flags(i), 3, true);
     continue;
   end
 
-  % bit 3: not enough pixels available
+  ind = (this_rest_wavelengths >= min_lambda) & ...
+          (this_rest_wavelengths <= max_lambda); % & ...
+          (~this_pixel_mask);
+
+  % bit 4: not enough pixels available
   if (nnz(ind) < min_num_pixels)
     filter_flags(i) = bitset(filter_flags(i), 4, true);
     continue;

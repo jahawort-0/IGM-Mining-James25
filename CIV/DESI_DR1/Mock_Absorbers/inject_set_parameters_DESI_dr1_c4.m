@@ -2,8 +2,8 @@
 % pipeline
 % Designed for using DESI DR1 Spectra
 % Load spectra from null search
-load('/home/cosmic/IGM-Mining-James/output/dr1/processed/file_null_search.mat') %% needs the right path
-null_QSO_ind = (p_no_CIV(:,1) > 0.5) & (fit_chi2 < 0.15);                       %%tune chi filter
+load('/home/cosmic/IGM-Mining-James/output/2-9-26-null_search/processed/processed_qsos_tst_DESI-dr1_S_1_E_10000.mat') %% needs the right path
+null_QSO_ind = (p_no_c4(:,1) > 0.4) & (fit_chi2 < 0.3);                       %%tune chi filter
 null_search_filter = test_ind;
 %flags for changes
 extrapolate_subdla = 0; %0 = off, 1 = on
@@ -35,7 +35,7 @@ observed_wavelengths = ...
 % % download Cooksey's dr7 spectra from this page: 
 % % http://www.guavanator.uhh.hawaii.edu/~kcooksey/SDSS/CIV/index.html 
 % % go to table: "SDSS spectra of the sightlines surveyed for C IV."
-releaseTest='1-27-26-nAVG0-no_CIV_search';
+releaseTest='2-20-26_mock_absorbers_injection';
 releasePrior='dr7'; %Need to decide on a prior dataset
 
 
@@ -69,7 +69,7 @@ minFunc_options =               ...           % optimization options for model f
            'MaxFunEvals', 10000);
 
 % C4 model parameters: parameter samples (for Quasi-Monte Carlo)
-num_C4_samples           = 50000;                  % number of parameter samples
+num_C4_samples           = 10000;                  % number of parameter samples
 alpha                    = 0.9;                    % weight of KDE component in mixture
 uniform_min_log_nciv     = 12.0;                   % range of column density samples    [cm⁻²]
 uniform_max_log_nciv     = 16.1;                   % from uniform distribution
@@ -134,7 +134,7 @@ c4_catalog_directory = @(name) ...
 % file_loader_DESI = @(tid)...
 %     (read_spec_DESI(sprintf("/home/cosmic/DESI_data/%s.fits",tid)));
 file_loader_DESI = @(tid)...
-    (read_spec_DESI(sprintf("/home/cosmic/desi-env/mock_abs_spectra_set_CIV/%s.fits",tid)));
+    (read_spec_DESI(sprintf("/home/cosmic/desi-env/sim_abs_CIV/%s.fits",tid)));
 
 mkdir(sprintf('%s/%s/processed', base_directory, releaseTest))
 mkdir(sprintf('%s/%s/plt', base_directory, releaseTest))
