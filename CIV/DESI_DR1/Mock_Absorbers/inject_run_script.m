@@ -2,11 +2,11 @@ clear
 fprintf('Setting paramters ...\n')
 % Load the no absorber quasars here
 num_quasars = 1850;
-cataloging = 1;
-preloading =1;
+cataloging = 0;
+preloading =0;
 sampling   = 1;
 plotting   = 0;
-processing = 1;
+processing = 0;
 merging    = 0;
 EWer       =0;
 pltP       =0;
