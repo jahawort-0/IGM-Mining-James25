@@ -35,7 +35,7 @@ observed_wavelengths = ...
 % file_loader = @(mjd, plate, fiber_id) ...
 %   (read_spec_dr7(sprintf('data/dr7/spectro/1d_26/%04i/1d/spSpec-%05i-%04i-%03i.fit',...
 %   plate, mjd, plate, fiber_id)));
-releaseTest='1-26-26-nAVG0-Chi2test';
+releaseTest='3-2-26-null_search';
 releasePrior='dr7'; %Need to decide on a prior dataset
 
 
@@ -69,7 +69,7 @@ minFunc_options =               ...           % optimization options for model f
            'MaxFunEvals', 10000);
 
 % C4 model parameters: parameter samples (for Quasi-Monte Carlo)
-num_C4_samples           = 50000;                  % number of parameter samples
+num_C4_samples           = 10000;                  % number of parameter samples
 alpha                    = 0.9;                    % weight of KDE component in mixture
 uniform_min_log_nciv     = 12.0;                   % range of column density samples    [cm⁻²]
 uniform_max_log_nciv     = 16.1;                   % from uniform distribution
@@ -134,7 +134,7 @@ c4_catalog_directory = @(name) ...
 % file_loader_DESI = @(tid)...
 %     (read_spec_DESI(sprintf("/home/cosmic/DESI_data/%s.fits",tid)));
 file_loader_DESI = @(tid)...
-    (read_spec_DESI(sprintf("/home/cosmic/desi-env/mock_abs_spectra_set_CIV/%s.fits",tid)));
+    (read_spec_DESI(sprintf("/home/cosmic/desi-env/sim_abs_CIV/%s.fits",tid)));
 
 mkdir(sprintf('%s/%s/processed', base_directory, releaseTest))
 mkdir(sprintf('%s/%s/plt', base_directory, releaseTest))

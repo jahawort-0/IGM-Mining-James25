@@ -1,18 +1,18 @@
 clear
 tic
 fprintf('Setting paramters ...\n')
-num_quasars = 1000;
+num_quasars = 30000;    %Change to # of spectra available
 cataloging = 1;
 preloading = 1;
-sampling   = 0; %Sample plot saving issue?
-plotting   = 1;
+sampling   = 1; %Sample plot saving issue?
+plotting   = 1; %turn off for final run
 processing = 1;
 merging    = 0;
 EWer       = 0;
 pltP       = 0;
 CredInt    = 0;
 FitDist    = 0;
-ChiSquare  = 1;
+ChiSquare  = 0;
 dv_mask    = 350;  
 HPCC = 0;
 voigtPrep = 0;
@@ -78,6 +78,7 @@ else
 end
     
 fprintf(sprintf('%d Samples are generated\n', num_C4_samples));
+
 % load preprocessed QSOs
 fprintf('Preloading QSOs ...\n')
 if preloading == 1
