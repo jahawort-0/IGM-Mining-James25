@@ -468,7 +468,8 @@ for all_quasar_ind = 1:numel(all_wavelengths)
         %B_gate = (B <= 0.85);
         
         % plotting
-        if ((plotting == 1) && (num_c4 == 1))
+        if ((plotting == 1) && (p_no_c4(this_quasar_ind, num_c4) > 0.5))
+            %((plotting == 1) && (num_c4 == 1))
             %(((plotting==1) && p_c4(this_quasar_ind, num_c4)>0.85 && (all_B(this_quasar_ind,num_c4)<= 0.85)))% || ((plotting==1) && (num_c4==1))) 
         
             max_log_posteriors = max([log_posteriors_no_c4(this_quasar_ind, num_c4),...
